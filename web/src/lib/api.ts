@@ -1,8 +1,15 @@
 import { API_URL } from "astro:env/server";
 import type { Order, Product } from "@/lib/types";
 
-async function request(path: string, init?: RequestInit): Promise<Response> {
-  return fetch(`${API_URL}${path}`, init);
+const USER_AGENT =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
+  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36 RacksideWeb";
+
+async function request(path: string, init: RequestInit = {}): Promise<Response> {
+  return fetch(`${API_URL}${path}`, {
+    ...init,
+    headers: { "User-Agent": USER_AGENT, ...init.headers },
+  });
 }
 
 export async function getProducts(): Promise<Product[]> {
