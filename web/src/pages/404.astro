@@ -1,0 +1,32 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="Not found — Rackside">
+  <section class="wrap nf">
+    <span class="eyebrow">Scratch</span>
+    <h1>That ball's off the table.</h1>
+    <p>The page you're after doesn't exist.</p>
+    <a href="/" class="btn btn-brass">Back to the shop</a>
+  </section>
+</Layout>
+
+<style>
+  .nf {
+    max-width: 32rem;
+    padding: 6rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .nf h1 {
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+  }
+  .nf p {
+    color: var(--chalk-dim);
+  }
+  .nf .btn {
+    margin-top: 1rem;
+  }
+</style>

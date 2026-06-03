@@ -1,0 +1,90 @@
+---
+import ProductArt from "@/components/ProductArt.astro";
+import { formatPrice } from "@/lib/money";
+import type { Product } from "@/lib/types";
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const soldOut = product.stock <= 0;
+---
+
+<article class="card panel">
+  <a href={`/products/${product.slug}`} class="card-art">
+    <ProductArt slug={product.slug} name={product.name} imageUrl={product.image_url} />
+  </a>
+  <div class="card-body">
+    <span class="eyebrow">{product.category}</span>
+    <a href={`/products/${product.slug}`} class="card-name">{product.name}</a>
+    <div class="card-foot">
+      <span class="price">{formatPrice(product.price_cents)}</span>
+      {
+        soldOut ? (
+          <span class="chip">Sold out</span>
+        ) : (
+          <button
+            class="btn btn-brass btn-sm"
+            data-add-to-cart
+            data-slug={product.slug}
+            data-name={product.name}
+            data-price={product.price_cents}
+          >
+            <span class="btn-label">Add</span>
+          </button>
+        )
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.25s;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: var(--line-strong);
+  }
+  .card-art :global(.art) {
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card:hover .card-art :global(.art) {
+    transform: scale(1.02);
+  }
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.9rem 0.6rem 0.5rem;
+  }
+  .card-name {
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .card-name:hover {
+    color: var(--brass-bright);
+  }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+  }
+  .price {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  .btn-sm {
+    padding: 0.5rem 1.1rem;
+    font-size: 0.85rem;
+  }
+</style>

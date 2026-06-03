@@ -1,0 +1,65 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+const hasError = Astro.url.searchParams.has("error");
+---
+
+<Layout title="Admin sign in — Rackside">
+  <section class="wrap login">
+    <div class="panel login-card">
+      <span class="eyebrow">Back office</span>
+      <h1>Sign in</h1>
+      {hasError && <p class="error">Invalid email or password.</p>}
+      <form method="post" action="/api/admin/login" class="form">
+        <label class="label">
+          Email
+          <input class="field" type="email" name="email" required autocomplete="email" />
+        </label>
+        <label class="label">
+          Password
+          <input
+            class="field"
+            type="password"
+            name="password"
+            required
+            autocomplete="current-password"
+          />
+        </label>
+        <button type="submit" class="btn btn-brass">Sign in</button>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .login {
+    display: flex;
+    justify-content: center;
+    padding: 5rem 0;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 26rem;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .login-card h1 {
+    font-size: 2rem;
+    margin: 0.4rem 0 1.2rem;
+  }
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .form .btn {
+    margin-top: 0.4rem;
+  }
+  .error {
+    color: #e0625a;
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+</style>

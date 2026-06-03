@@ -1,0 +1,60 @@
+---
+const path = Astro.url.pathname;
+const links = [
+  { href: "/admin", label: "Products" },
+  { href: "/admin/orders", label: "Orders" },
+];
+---
+
+<div class="admin-nav">
+  <nav class="links">
+    {
+      links.map((link) => (
+        <a
+          href={link.href}
+          class:list={["link", { active: path === link.href }]}>
+          {link.label}
+        </a>
+      ))
+    }
+    <a href="/" class="link muted">View store ↗</a>
+  </nav>
+  <form method="post" action="/api/admin/logout">
+    <button type="submit" class="btn btn-ghost btn-sm">Sign out</button>
+  </form>
+</div>
+
+<style>
+  .admin-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-weight: 500;
+  }
+  .link {
+    color: var(--chalk-dim);
+  }
+  .link:hover {
+    color: var(--brass-bright);
+  }
+  .link.active {
+    color: var(--brass-bright);
+  }
+  .link.muted {
+    color: var(--chalk-faint);
+    font-size: 0.85rem;
+  }
+  .btn-sm {
+    padding: 0.5rem 1.1rem;
+    font-size: 0.85rem;
+  }
+</style>

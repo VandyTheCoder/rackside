@@ -1,0 +1,23 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import AdminNav from "@/components/AdminNav.astro";
+import ProductForm from "@/components/ProductForm.astro";
+---
+
+<Layout title="New product — Rackside Admin">
+  <section class="wrap admin">
+    <AdminNav />
+    <h1>New product</h1>
+    <ProductForm action="/api/admin/products" />
+  </section>
+</Layout>
+
+<style>
+  .admin {
+    padding: 2.5rem 0;
+  }
+  .admin h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+</style>

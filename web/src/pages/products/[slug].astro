@@ -1,0 +1,106 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ProductArt from "@/components/ProductArt.astro";
+import { getProduct } from "@/lib/api";
+import { formatPrice } from "@/lib/money";
+
+const { slug } = Astro.params;
+const product = slug ? await getProduct(slug) : null;
+
+if (!product) {
+  return Astro.redirect("/404");
+}
+
+const soldOut = product.stock <= 0;
+---
+
+<Layout title={`${product.name} — Rackside`} description={product.description}>
+  <section class="wrap detail">
+    <a href="/" class="back">← Back to the rack</a>
+    <div class="detail-grid">
+      <div class="detail-art rise">
+        <ProductArt
+          slug={product.slug}
+          name={product.name}
+          imageUrl={product.image_url}
+        />
+      </div>
+      <div class="detail-body rise" style="animation-delay: 100ms">
+        <span class="eyebrow">{product.category}</span>
+        <h1 class="detail-name">{product.name}</h1>
+        <p class="detail-price">{formatPrice(product.price_cents)}</p>
+        <p class="detail-desc">{product.description}</p>
+        <p class="detail-stock">
+          {soldOut ? "Currently sold out" : `${product.stock} in stock`}
+        </p>
+        {
+          soldOut ? (
+            <button class="btn btn-ghost" disabled>Sold out</button>
+          ) : (
+            <button
+              class="btn btn-brass detail-add"
+              data-add-to-cart
+              data-slug={product.slug}
+              data-name={product.name}
+              data-price={product.price_cents}
+            >
+              <span class="btn-label">Add to cart</span>
+            </button>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .detail {
+    padding: 3rem 0;
+  }
+  .back {
+    color: var(--chalk-dim);
+    font-size: 0.9rem;
+  }
+  .back:hover {
+    color: var(--brass-bright);
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 1.5rem;
+    align-items: start;
+  }
+  .detail-name {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin: 0.8rem 0 0;
+  }
+  .detail-price {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    margin: 0.8rem 0;
+    color: var(--brass-bright);
+  }
+  .detail-desc {
+    color: var(--chalk-dim);
+    line-height: 1.7;
+    font-size: 1.05rem;
+  }
+  .detail-stock {
+    color: var(--chalk-faint);
+    font-size: 0.9rem;
+    margin: 1.2rem 0 1.5rem;
+  }
+  .detail-add {
+    min-width: 200px;
+  }
+  @media (max-width: 800px) {
+    .detail-grid {
+      grid-template-columns: 1fr;
+      gap: 1.8rem;
+    }
+    .detail-art {
+      max-width: 420px;
+    }
+  }
+</style>

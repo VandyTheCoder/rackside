@@ -1,0 +1,50 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="Order confirmed — Rackside">
+  <section class="wrap success">
+    <div class="badge">✓</div>
+    <h1>Rack 'em up</h1>
+    <p>Your payment cleared and your order is in. A receipt is on its way to your inbox.</p>
+    <a href="/" class="btn btn-brass">Back to the shop</a>
+  </section>
+</Layout>
+
+<script>
+  import { clearCart } from "@/scripts/cart";
+  clearCart();
+</script>
+
+<style>
+  .success {
+    max-width: 30rem;
+    text-align: center;
+    padding: 5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .badge {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--brass-bright), var(--brass));
+    color: var(--ink);
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  .success h1 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+  }
+  .success p {
+    color: var(--chalk-dim);
+    line-height: 1.6;
+  }
+  .success .btn {
+    margin-top: 1rem;
+  }
+</style>

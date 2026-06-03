@@ -1,0 +1,184 @@
+---
+import "@/styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Rackside — Billiards Supply",
+  description = "Cues, cases, and championship gear for players who respect the table.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a href="/" class="brand">
+          <span class="brand-ball">8</span>
+          <span class="brand-name">Rackside</span>
+        </a>
+        <nav class="nav">
+          <a href="/">Shop</a>
+          <a href="/cart" class="cart-link">
+            Cart
+            <span id="cart-count" class="cart-count" hidden></span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <span class="brand-name footer-mark">Rackside</span>
+        <span>A demo storefront · built with Astro &amp; FastAPI</span>
+      </div>
+    </footer>
+
+    <script>
+      import { addItem, cartCount } from "@/scripts/cart";
+
+      const el = document.getElementById("cart-count");
+      function render() {
+        if (!el) return;
+        const n = cartCount();
+        el.textContent = String(n);
+        el.hidden = n === 0;
+      }
+      render();
+      window.addEventListener("cart:change", render);
+      window.addEventListener("storage", render);
+
+      document.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        const button = target.closest<HTMLElement>("[data-add-to-cart]");
+        if (!button) return;
+        addItem({
+          slug: button.dataset.slug!,
+          name: button.dataset.name!,
+          price_cents: Number(button.dataset.price),
+        });
+        const label = button.querySelector(".btn-label");
+        if (label) {
+          const original = label.textContent;
+          label.textContent = "Added to cart";
+          window.setTimeout(() => {
+            label.textContent = original;
+          }, 1400);
+        }
+      });
+    </script>
+
+    <style>
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 1px solid var(--line);
+        background: rgba(4, 16, 10, 0.72);
+        backdrop-filter: blur(14px);
+      }
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 72px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .brand-ball {
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 32% 28%, #4a4a4a, #0a0a0a);
+        color: #fff;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.85rem;
+        box-shadow: inset 0 0 0 6px #f6f3ea, 0 6px 16px -6px #000;
+      }
+      .brand-name {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 1.3rem;
+        letter-spacing: -0.02em;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 1.8rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+      .nav a {
+        color: var(--chalk-dim);
+        transition: color 0.2s;
+      }
+      .nav a:hover {
+        color: var(--brass-bright);
+      }
+      .cart-link {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+      .cart-count {
+        display: grid;
+        place-items: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        background: var(--brass);
+        color: var(--ink);
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      main {
+        min-height: 60vh;
+      }
+      .site-footer {
+        margin-top: 6rem;
+        border-top: 1px solid var(--line);
+        padding: 2rem 0;
+      }
+      .footer-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        color: var(--chalk-faint);
+        font-size: 0.85rem;
+      }
+      .footer-mark {
+        font-size: 1.05rem;
+        color: var(--chalk-dim);
+      }
+    </style>
+  </body>
+</html>

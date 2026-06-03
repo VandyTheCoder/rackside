@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+}
+
+:root {
+  --felt-950: #04100a;
+  --felt-900: #07180f;
+  --felt-800: #0a2a1d;
+  --felt-700: #0e3d29;
+  --felt-600: #115e43;
+  --felt-500: #1a8a60;
+  --ink: #050806;
+  --chalk: #f2eee1;
+  --chalk-dim: rgba(242, 238, 225, 0.66);
+  --chalk-faint: rgba(242, 238, 225, 0.4);
+  --brass: #c9a24a;
+  --brass-bright: #e6c878;
+  --line: rgba(242, 238, 225, 0.12);
+  --line-strong: rgba(242, 238, 225, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--chalk);
+  background: var(--felt-950);
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Felt gradient-mesh atmosphere */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 50% at 18% 0%, rgba(26, 138, 96, 0.28), transparent 60%),
+    radial-gradient(60% 55% at 92% 8%, rgba(17, 94, 67, 0.34), transparent 62%),
+    radial-gradient(70% 60% at 50% 110%, rgba(14, 61, 41, 0.6), transparent 70%),
+    linear-gradient(180deg, var(--felt-900), var(--felt-950));
+}
+
+/* Chalk-dust grain */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin: 0;
+}
+
+::selection {
+  background: var(--brass);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass-bright);
+  outline-offset: 3px;
+}
+
+/* ---- Reusable pieces ---- */
+.wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.btn-brass {
+  background: linear-gradient(180deg, var(--brass-bright), var(--brass));
+  color: var(--ink);
+  box-shadow: 0 12px 30px -12px rgba(201, 162, 74, 0.6);
+}
+.btn-brass:hover {
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--chalk);
+  border-color: var(--line-strong);
+}
+.btn-ghost:hover {
+  border-color: var(--brass);
+  color: var(--brass-bright);
+}
+.btn:active {
+  transform: translateY(0) scale(0.98);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.panel {
+  background: linear-gradient(
+    165deg,
+    rgba(17, 94, 67, 0.22),
+    rgba(7, 24, 15, 0.55)
+  );
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(242, 238, 225, 0.08);
+  border: 1px solid var(--line);
+  color: var(--chalk-dim);
+}
+
+.field {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--chalk);
+  background: rgba(4, 16, 10, 0.6);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--brass);
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--chalk-dim);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  opacity: 0;
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

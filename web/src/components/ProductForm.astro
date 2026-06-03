@@ -1,0 +1,104 @@
+---
+import type { Product } from "@/lib/types";
+
+interface Props {
+  action: string;
+  product?: Product | null;
+}
+
+const { action, product = null } = Astro.props;
+---
+
+<form method="post" action={action} class="product-form">
+  <label class="label">
+    Name
+    <input class="field" name="name" required value={product?.name ?? ""} />
+  </label>
+
+  <label class="label">
+    Slug
+    <input
+      class="field"
+      name="slug"
+      required
+      placeholder="leather-cue-case"
+      value={product?.slug ?? ""}
+    />
+  </label>
+
+  <div class="row">
+    <label class="label">
+      Price (USD)
+      <input
+        class="field"
+        name="price"
+        type="number"
+        step="0.01"
+        min="0"
+        required
+        value={product ? (product.price_cents / 100).toFixed(2) : ""}
+      />
+    </label>
+    <label class="label">
+      Stock
+      <input
+        class="field"
+        name="stock"
+        type="number"
+        min="0"
+        required
+        value={product?.stock ?? 0}
+      />
+    </label>
+    <label class="label">
+      Category
+      <input class="field" name="category" required value={product?.category ?? ""} />
+    </label>
+  </div>
+
+  <label class="label">
+    Image URL (optional)
+    <input class="field" name="image_url" type="url" value={product?.image_url ?? ""} />
+  </label>
+
+  <label class="label">
+    Description
+    <textarea class="field" name="description" rows="4" required>{product?.description ?? ""}</textarea>
+  </label>
+
+  <label class="checkbox">
+    <input type="checkbox" name="active" checked={product?.active ?? true} />
+    Visible in store
+  </label>
+
+  <button type="submit" class="btn btn-brass">Save product</button>
+</form>
+
+<style>
+  .product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    max-width: 40rem;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--chalk-dim);
+  }
+  .product-form .btn {
+    align-self: flex-start;
+  }
+  @media (max-width: 640px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

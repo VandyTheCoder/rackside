@@ -1,0 +1,114 @@
+---
+const COLORS: Record<number, string> = {
+  1: "#f4c430",
+  2: "#1f6feb",
+  3: "#d7263d",
+  4: "#7b2cbf",
+  5: "#e8682c",
+  6: "#1a8a60",
+  7: "#9b1d3a",
+  8: "#0a0a0a",
+  9: "#f4c430",
+  10: "#1f6feb",
+  11: "#d7263d",
+  12: "#7b2cbf",
+  13: "#e8682c",
+  14: "#1a8a60",
+  15: "#9b1d3a",
+};
+
+const r = 27;
+const stepX = r * 1.74;
+const startX = 78;
+const centerY = 214;
+
+type Ball = {
+  x: number;
+  y: number;
+  n: number;
+  color: string;
+  striped: boolean;
+};
+
+const balls: Ball[] = [];
+let n = 1;
+for (let col = 0; col < 5; col += 1) {
+  const count = 5 - col;
+  const x = startX + col * stepX;
+  for (let k = 0; k < count; k += 1) {
+    const y = centerY + (k - (count - 1) / 2) * (r * 2 + 3);
+    balls.push({ x, y, n, color: COLORS[n], striped: n > 8 });
+    n += 1;
+  }
+}
+
+const cueX = startX + 5 * stepX + 6;
+---
+
+<svg class="hero-scene" viewBox="0 0 560 430" role="img" aria-label="A racked set of billiard balls">
+  <defs>
+    <radialGradient id="cueball" cx="36%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="70%" stop-color="#efe9d8" />
+      <stop offset="100%" stop-color="#b8b09a" />
+    </radialGradient>
+    <linearGradient id="cue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e6c878" />
+      <stop offset="55%" stop-color="#9a6a2f" />
+      <stop offset="100%" stop-color="#3a2410" />
+    </linearGradient>
+    {
+      balls.map((b) => (
+        <radialGradient id={`g${b.n}`} cx="36%" cy="30%" r="74%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+          <stop offset="24%" stop-color={b.striped ? "#f6f3ea" : b.color} />
+          <stop offset="100%" stop-color="#0a0a0a" />
+        </radialGradient>
+      ))
+    }
+  </defs>
+
+  <!-- cue stick -->
+  <line x1="535" y1="40" x2={cueX + 18} y2={centerY} stroke="url(#cue)" stroke-width="9" stroke-linecap="round" />
+  <line x1="540" y1="34" x2={cueX + 22} y2={centerY - 4} stroke="#1a1a1a" stroke-width="2" opacity="0.35" />
+
+  <!-- cue ball -->
+  <ellipse cx={cueX + 4} cy={centerY + r + 6} rx={r} ry="9" fill="#000" opacity="0.3" />
+  <circle cx={cueX} cy={centerY} r={r} fill="url(#cueball)" />
+
+  {
+    balls.map((b) => (
+      <g>
+        <ellipse cx={b.x} cy={b.y + r + 5} rx={r - 3} ry="8" fill="#000" opacity="0.28" />
+        <circle cx={b.x} cy={b.y} r={r} fill={`url(#g${b.n})`} />
+        {b.striped && (
+          <path
+            d={`M ${b.x - r} ${b.y} a ${r} ${r} 0 0 0 ${r * 2} 0 Z`}
+            fill={b.color}
+            opacity="0.9"
+            transform={`rotate(-12 ${b.x} ${b.y})`}
+          />
+        )}
+        <circle cx={b.x} cy={b.y + 2} r={r * 0.42} fill="#f6f3ea" />
+        <text
+          x={b.x}
+          y={b.y + 2}
+          text-anchor="middle"
+          dominant-baseline="central"
+          font-family="Georgia, serif"
+          font-size="17"
+          font-weight="700"
+          fill="#0a0a0a">{b.n}</text>
+        <ellipse cx={b.x - r * 0.34} cy={b.y - r * 0.42} rx={r * 0.3} ry={r * 0.18} fill="#fff" opacity="0.45" />
+      </g>
+    ))
+  }
+</svg>
+
+<style>
+  .hero-scene {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.45));
+  }
+</style>

@@ -1,0 +1,123 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import HeroScene from "@/components/HeroScene.astro";
+import ProductCard from "@/components/ProductCard.astro";
+import { getProducts } from "@/lib/api";
+
+const products = await getProducts();
+---
+
+<Layout>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy rise">
+        <span class="eyebrow">Billiards supply · est. on the break</span>
+        <h1 class="hero-title">
+          Gear that holds<br />up to the <em>table.</em>
+        </h1>
+        <p class="hero-sub">
+          Tournament cues, hard cases, and the small things that win racks —
+          chosen for players who care how the game feels in the hand.
+        </p>
+        <div class="hero-cta">
+          <a href="#shop" class="btn btn-brass">Shop the rack</a>
+          <a href="#shop" class="btn btn-ghost">View all gear</a>
+        </div>
+      </div>
+      <div class="hero-art rise" style="animation-delay: 120ms">
+        <HeroScene />
+      </div>
+    </div>
+  </section>
+
+  <section id="shop" class="wrap shop">
+    <div class="shop-head">
+      <h2>The rack</h2>
+      <span class="chip">{products.length} pieces</span>
+    </div>
+    {
+      products.length === 0 ? (
+        <p class="empty">The rack is being set. Check back shortly.</p>
+      ) : (
+        <div class="grid">
+          {products.map((product) => (
+            <ProductCard product={product} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    padding: 4.5rem 0 2.5rem;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  .hero-title {
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+    font-weight: 600;
+    margin: 1.2rem 0 0;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--brass-bright);
+  }
+  .hero-sub {
+    margin: 1.4rem 0 0;
+    max-width: 40ch;
+    color: var(--chalk-dim);
+    font-size: 1.08rem;
+    line-height: 1.6;
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+  .shop {
+    padding-top: 2rem;
+  }
+  .shop-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+  }
+  .shop-head h2 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.4rem;
+  }
+  .empty {
+    color: var(--chalk-dim);
+  }
+  @media (max-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-art {
+      order: -1;
+      max-width: 460px;
+    }
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,143 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import AdminNav from "@/components/AdminNav.astro";
+import { getAdminProducts } from "@/lib/api";
+import { getToken, clearToken } from "@/lib/auth";
+import { formatPrice } from "@/lib/money";
+
+const token = getToken(Astro.cookies)!;
+const products = await getAdminProducts(token);
+
+if (products === null) {
+  clearToken(Astro.cookies);
+  return Astro.redirect("/admin/login");
+}
+---
+
+<Layout title="Products — Rackside Admin">
+  <section class="wrap admin">
+    <AdminNav />
+    <div class="head">
+      <h1>Products</h1>
+      <a href="/admin/products/new" class="btn btn-brass btn-sm">New product</a>
+    </div>
+
+    <div class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            products.map((product) => (
+              <tr>
+                <td class="name">{product.name}</td>
+                <td class="muted">{product.category}</td>
+                <td>{formatPrice(product.price_cents)}</td>
+                <td>{product.stock}</td>
+                <td>
+                  <span class:list={["dot", { off: !product.active }]} />
+                  {product.active ? "Active" : "Hidden"}
+                </td>
+                <td class="actions">
+                  <a href={`/admin/products/${product.id}/edit`} class="edit">
+                    Edit
+                  </a>
+                  <form method="post" action={`/api/admin/products/${product.id}/delete`}>
+                    <button type="submit" class="del">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .admin {
+    padding: 2.5rem 0;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .head h1 {
+    font-size: 2rem;
+  }
+  .btn-sm {
+    padding: 0.55rem 1.2rem;
+    font-size: 0.85rem;
+  }
+  .table-wrap {
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  thead th {
+    text-align: left;
+    padding: 1rem 1.2rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--chalk-faint);
+    border-bottom: 1px solid var(--line);
+  }
+  tbody td {
+    padding: 0.9rem 1.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .name {
+    font-weight: 600;
+  }
+  .muted {
+    color: var(--chalk-dim);
+  }
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--felt-500);
+    margin-right: 0.5rem;
+  }
+  .dot.off {
+    background: var(--chalk-faint);
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+  .edit {
+    color: var(--brass-bright);
+  }
+  .del {
+    background: none;
+    border: none;
+    color: var(--chalk-faint);
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .del:hover {
+    color: #e0625a;
+  }
+</style>

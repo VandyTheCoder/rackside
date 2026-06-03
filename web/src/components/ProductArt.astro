@@ -1,0 +1,89 @@
+---
+interface Props {
+  slug: string;
+  name: string;
+  imageUrl?: string | null;
+  class?: string;
+}
+
+const { slug, name, imageUrl, class: className = "" } = Astro.props;
+
+const ballColors = [
+  "#f4c430",
+  "#1f6feb",
+  "#d7263d",
+  "#7b2cbf",
+  "#e8682c",
+  "#1a8a60",
+  "#9b1d3a",
+];
+
+function hash(value: string): number {
+  let total = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    total = (total * 31 + value.charCodeAt(i)) >>> 0;
+  }
+  return total;
+}
+
+const seed = hash(slug);
+const color = ballColors[seed % ballColors.length];
+const number = (seed % 15) + 1;
+const fid = `f-${slug}`;
+const bid = `b-${slug}`;
+---
+
+<div class={`art ${className}`}>
+  {
+    imageUrl ? (
+      <img src={imageUrl} alt={name} loading="lazy" />
+    ) : (
+      <svg viewBox="0 0 400 400" role="presentation" aria-hidden="true">
+        <defs>
+          <radialGradient id={fid} cx="32%" cy="26%" r="85%">
+            <stop offset="0%" stop-color="#1a8a60" />
+            <stop offset="60%" stop-color="#0e3d29" />
+            <stop offset="100%" stop-color="#07180f" />
+          </radialGradient>
+          <radialGradient id={bid} cx="36%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+            <stop offset="22%" stop-color={color} />
+            <stop offset="100%" stop-color="#0a0a0a" />
+          </radialGradient>
+        </defs>
+        <rect width="400" height="400" fill={`url(#${fid})`} />
+        <ellipse cx="205" cy="300" rx="120" ry="26" fill="#000" opacity="0.35" />
+        <circle cx="200" cy="196" r="104" fill={`url(#${bid})`} />
+        <circle cx="200" cy="206" r="46" fill="#f6f3ea" />
+        <text
+          x="200"
+          y="206"
+          text-anchor="middle"
+          dominant-baseline="central"
+          font-family="Georgia, serif"
+          font-size="46"
+          font-weight="700"
+          fill="#0a0a0a">{number}</text>
+        <ellipse cx="168" cy="150" rx="34" ry="20" fill="#fff" opacity="0.4" />
+      </svg>
+    )
+  }
+</div>
+
+<style>
+  .art {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 16px;
+    background: var(--felt-900);
+    border: 1px solid var(--line);
+  }
+  .art img,
+  .art svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+</style>
