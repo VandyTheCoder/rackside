@@ -5,12 +5,24 @@ export type CartItem = {
   quantity: number;
 };
 
-const KEY = "rackside.cart";
+const KEY = "rackside.cart.v1";
+
+function isValid(item: unknown): item is CartItem {
+  const entry = item as Partial<CartItem>;
+  return (
+    typeof entry?.slug === "string" &&
+    typeof entry?.name === "string" &&
+    Number.isFinite(entry?.price_cents) &&
+    Number.isFinite(entry?.quantity) &&
+    (entry.quantity as number) > 0
+  );
+}
 
 export function getCart(): CartItem[] {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter(isValid) : [];
   } catch {
     return [];
   }
