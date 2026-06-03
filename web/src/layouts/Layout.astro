@@ -56,17 +56,31 @@ const {
 
     <script>
       import { addItem, cartCount } from "@/scripts/cart";
+      import { initReveal } from "@/scripts/reveal";
+
+      initReveal();
 
       const el = document.getElementById("cart-count");
-      function render() {
+      function updateBadge(animate = false) {
         if (!el) return;
         const n = cartCount();
         el.textContent = String(n);
         el.hidden = n === 0;
+        if (animate && n > 0) {
+          el.classList.remove("pop");
+          void el.offsetWidth;
+          el.classList.add("pop");
+        }
       }
-      render();
-      window.addEventListener("cart:change", render);
-      window.addEventListener("storage", render);
+      updateBadge();
+      window.addEventListener("cart:change", () => updateBadge(true));
+      window.addEventListener("storage", () => updateBadge(false));
+
+      const header = document.querySelector(".site-header");
+      const onScroll = () =>
+        header?.classList.toggle("scrolled", window.scrollY > 8);
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
 
       document.addEventListener("click", (event) => {
         const target = event.target as HTMLElement;
@@ -93,9 +107,16 @@ const {
         position: sticky;
         top: 0;
         z-index: 50;
-        border-bottom: 1px solid var(--line);
-        background: rgba(20, 88, 50, 0.85);
+        border-bottom: 1px solid transparent;
+        background: rgba(20, 88, 50, 0.55);
         backdrop-filter: blur(14px);
+        transition: background 0.3s ease, box-shadow 0.3s ease,
+          border-color 0.3s ease;
+      }
+      .site-header.scrolled {
+        background: rgba(13, 66, 38, 0.92);
+        border-bottom-color: var(--line);
+        box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.6);
       }
       .header-inner {
         display: flex;
@@ -134,12 +155,34 @@ const {
         font-size: 0.95rem;
         font-weight: 500;
       }
-      .nav a {
+      .nav > a {
+        position: relative;
         color: var(--chalk-dim);
         transition: color 0.2s;
       }
-      .nav a:hover {
-        color: var(--brass-bright);
+      .nav > a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        height: 2px;
+        width: 100%;
+        background: var(--yellow);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .nav > a:hover {
+        color: #fff;
+      }
+      .nav > a:hover::after {
+        transform: scaleX(1);
+      }
+      .brand {
+        transition: transform 0.2s ease;
+      }
+      .brand:hover {
+        transform: translateY(-1px);
       }
       .cart-link {
         position: relative;

@@ -10,28 +10,54 @@ const products = await getProducts();
 <Layout>
   <section class="hero">
     <div class="wrap hero-grid">
-      <div class="hero-copy rise">
-        <span class="eyebrow">Billiards supply · est. on the break</span>
-        <h1 class="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow rise" style="--delay: 60ms"
+          >Billiards supply · est. on the break</span
+        >
+        <h1 class="hero-title rise" style="--delay: 140ms">
           Gear that holds<br />up to the <em>table.</em>
         </h1>
-        <p class="hero-sub">
+        <p class="hero-sub rise" style="--delay: 220ms">
           Tournament cues, hard cases, and the small things that win racks —
           chosen for players who care how the game feels in the hand.
         </p>
-        <div class="hero-cta">
+        <div class="hero-cta rise" style="--delay: 300ms">
           <a href="#shop" class="btn btn-brass">Shop the rack</a>
           <a href="#shop" class="btn btn-ghost">View all gear</a>
         </div>
       </div>
-      <div class="hero-art rise" style="animation-delay: 120ms">
-        <HeroScene />
+      <div class="hero-art rise" style="--delay: 220ms">
+        <div class="floaty"><HeroScene /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap features">
+    <div class="feature reveal" style="--delay: 0ms">
+      <span class="feature-ic">🎱</span>
+      <div>
+        <p class="feature-h">Tournament-grade gear</p>
+        <p class="feature-p">Curated for players who feel the difference</p>
+      </div>
+    </div>
+    <div class="feature reveal" style="--delay: 90ms">
+      <span class="feature-ic">🚚</span>
+      <div>
+        <p class="feature-h">Free shipping over $99</p>
+        <p class="feature-p">Across the contiguous US</p>
+      </div>
+    </div>
+    <div class="feature reveal" style="--delay: 180ms">
+      <span class="feature-ic">↩️</span>
+      <div>
+        <p class="feature-h">30-day returns</p>
+        <p class="feature-p">Play with it, send it back if it's not right</p>
       </div>
     </div>
   </section>
 
   <section id="shop" class="wrap shop">
-    <div class="shop-head">
+    <div class="shop-head reveal">
       <h2>The rack</h2>
       <div class="toolbar">
         <div class="search">
@@ -64,8 +90,8 @@ const products = await getProducts();
       ) : (
         <>
           <div id="product-grid" class="grid">
-            {products.map((product) => (
-              <ProductCard product={product} />
+            {products.map((product, i) => (
+              <ProductCard product={product} index={i} />
             ))}
           </div>
           <p id="no-results" class="empty" hidden>
@@ -123,13 +149,47 @@ const products = await getProducts();
     align-items: center;
   }
   .hero-title {
-    font-size: clamp(2.8rem, 6vw, 4.8rem);
-    font-weight: 600;
-    margin: 1.2rem 0 0;
+    font-size: clamp(3rem, 6.4vw, 5.4rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 1.1rem 0 0;
+    text-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
   }
   .hero-title em {
     font-style: italic;
     color: var(--brass-bright);
+    position: relative;
+    text-shadow: 0 0 32px rgba(255, 214, 77, 0.45);
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1rem 1.2rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--line);
+  }
+  .feature-ic {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+  .feature-h {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .feature-p {
+    margin: 0.15rem 0 0;
+    font-size: 0.8rem;
+    color: var(--chalk-faint);
   }
   .hero-sub {
     margin: 1.4rem 0 0;
@@ -253,6 +313,9 @@ const products = await getProducts();
   }
   @media (max-width: 560px) {
     .grid {
+      grid-template-columns: 1fr;
+    }
+    .features {
       grid-template-columns: 1fr;
     }
     .shop-head {

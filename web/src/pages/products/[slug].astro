@@ -63,8 +63,8 @@ const related = [...sameCategory, ...others].slice(0, 4);
       <section class="wrap related">
         <h2 class="related-title">Related gear</h2>
         <div class="related-grid">
-          {related.map((item) => (
-            <ProductCard product={item} />
+          {related.map((item, i) => (
+            <ProductCard product={item} index={i} />
           ))}
         </div>
       </section>

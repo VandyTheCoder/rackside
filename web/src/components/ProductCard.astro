@@ -5,14 +5,16 @@ import type { Product } from "@/lib/types";
 
 interface Props {
   product: Product;
+  index?: number;
 }
 
-const { product } = Astro.props;
+const { product, index = 0 } = Astro.props;
 const soldOut = product.stock <= 0;
 ---
 
 <article
-  class="card panel"
+  class="card panel reveal"
+  style={`--delay:${index * 70}ms`}
   data-name={product.name.toLowerCase()}
   data-category={product.category.toLowerCase()}
   data-price={product.price_cents}
@@ -49,18 +51,31 @@ const soldOut = product.stock <= 0;
     display: flex;
     flex-direction: column;
     padding: 12px;
-    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 0.25s;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card.reveal {
+    /* reveal handles initial opacity/translate; keep hover transform separate */
+    will-change: opacity, transform;
   }
   .card:hover {
-    transform: translateY(-6px);
-    border-color: var(--line-strong);
+    transform: translateY(-8px);
+    border-color: rgba(255, 214, 77, 0.45);
+    box-shadow: 0 26px 44px -22px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(255, 214, 77, 0.12);
+  }
+  .card-art {
+    overflow: hidden;
+    border-radius: 16px;
   }
   .card-art :global(.art) {
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .card:hover .card-art :global(.art) {
-    transform: scale(1.02);
+    transform: scale(1.06);
+  }
+  .price {
+    color: var(--yellow);
   }
   .card-body {
     display: flex;
