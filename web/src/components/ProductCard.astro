@@ -11,7 +11,12 @@ const { product } = Astro.props;
 const soldOut = product.stock <= 0;
 ---
 
-<article class="card panel">
+<article
+  class="card panel"
+  data-name={product.name.toLowerCase()}
+  data-category={product.category.toLowerCase()}
+  data-price={product.price_cents}
+>
   <a href={`/products/${product.slug}`} class="card-art">
     <ProductArt slug={product.slug} name={product.name} imageUrl={product.image_url} />
   </a>

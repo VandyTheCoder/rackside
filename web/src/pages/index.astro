@@ -33,21 +33,85 @@ const products = await getProducts();
   <section id="shop" class="wrap shop">
     <div class="shop-head">
       <h2>The rack</h2>
-      <span class="chip">{products.length} pieces</span>
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="search-icon">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <input
+            id="search"
+            type="search"
+            placeholder="Search cues, cases, chalk…"
+            aria-label="Search products"
+            autocomplete="off"
+          />
+        </div>
+        <label class="sort">
+          <span class="sort-label">Sort</span>
+          <select id="sort" aria-label="Sort products">
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="name">Name: A–Z</option>
+          </select>
+        </label>
+      </div>
     </div>
+
     {
       products.length === 0 ? (
         <p class="empty">The rack is being set. Check back shortly.</p>
       ) : (
-        <div class="grid">
-          {products.map((product) => (
-            <ProductCard product={product} />
-          ))}
-        </div>
+        <>
+          <div id="product-grid" class="grid">
+            {products.map((product) => (
+              <ProductCard product={product} />
+            ))}
+          </div>
+          <p id="no-results" class="empty" hidden>
+            No gear matches your search.
+          </p>
+        </>
       )
     }
   </section>
 </Layout>
+
+<script>
+  const grid = document.getElementById("product-grid");
+  const search = document.getElementById("search") as HTMLInputElement | null;
+  const sort = document.getElementById("sort") as HTMLSelectElement | null;
+  const noResults = document.getElementById("no-results");
+
+  if (grid && search && sort) {
+    const cards = Array.from(grid.children) as HTMLElement[];
+    const order = new Map(cards.map((card, index) => [card, index]));
+    const priceOf = (card: HTMLElement) => Number(card.dataset.price);
+
+    const sorters: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
+      featured: (a, b) => order.get(a)! - order.get(b)!,
+      "price-asc": (a, b) => priceOf(a) - priceOf(b),
+      "price-desc": (a, b) => priceOf(b) - priceOf(a),
+      name: (a, b) => (a.dataset.name ?? "").localeCompare(b.dataset.name ?? ""),
+    };
+
+    function apply() {
+      const query = search!.value.trim().toLowerCase();
+      const matches = cards.filter((card) => {
+        const haystack = `${card.dataset.name} ${card.dataset.category}`;
+        return query === "" || haystack.includes(query);
+      });
+      matches.sort(sorters[sort!.value] ?? sorters.featured);
+
+      grid!.replaceChildren(...matches);
+      if (noResults) noResults.hidden = matches.length > 0;
+    }
+
+    search.addEventListener("input", apply);
+    sort.addEventListener("change", apply);
+  }
+</script>
 
 <style>
   .hero {
@@ -86,15 +150,93 @@ const products = await getProducts();
   }
   .shop-head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
     border-bottom: 1px solid var(--line);
-    padding-bottom: 1rem;
+    padding-bottom: 1.2rem;
     margin-bottom: 2rem;
   }
   .shop-head h2 {
     font-size: clamp(1.8rem, 3vw, 2.4rem);
   }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .search {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-icon {
+    position: absolute;
+    left: 0.85rem;
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: var(--chalk-faint);
+    stroke-width: 2;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+  #search {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    color: var(--chalk);
+    background: rgba(4, 16, 10, 0.55);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 0.6rem 1rem 0.6rem 2.4rem;
+    width: 16rem;
+    max-width: 100%;
+    transition: border-color 0.2s;
+  }
+  #search:focus {
+    outline: none;
+    border-color: var(--brass);
+  }
+  #search::placeholder {
+    color: var(--chalk-faint);
+  }
+  .sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .sort-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--chalk-faint);
+  }
+  #sort {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--chalk);
+    background: rgba(4, 16, 10, 0.55);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 0.55rem 2rem 0.55rem 0.9rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c9a24a' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+  }
+  #sort:focus {
+    outline: none;
+    border-color: var(--brass);
+  }
+  #sort option {
+    background: var(--felt-900);
+    color: var(--chalk);
+  }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -102,6 +244,7 @@ const products = await getProducts();
   }
   .empty {
     color: var(--chalk-dim);
+    padding: 1rem 0;
   }
   @media (max-width: 900px) {
     .hero-grid {
@@ -118,6 +261,18 @@ const products = await getProducts();
   @media (max-width: 560px) {
     .grid {
       grid-template-columns: 1fr;
+    }
+    .shop-head {
+      align-items: flex-start;
+    }
+    #search {
+      width: 100%;
+    }
+    .toolbar {
+      width: 100%;
+    }
+    .search {
+      flex: 1;
     }
   }
 </style>
