@@ -1,7 +1,8 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ProductArt from "@/components/ProductArt.astro";
-import { getProduct } from "@/lib/api";
+import ProductCard from "@/components/ProductCard.astro";
+import { getProduct, getProducts } from "@/lib/api";
 import { formatPrice } from "@/lib/money";
 
 const { slug } = Astro.params;
@@ -12,6 +13,11 @@ if (!product) {
 }
 
 const soldOut = product.stock <= 0;
+
+const pool = (await getProducts()).filter((item) => item.slug !== product.slug);
+const sameCategory = pool.filter((item) => item.category === product.category);
+const others = pool.filter((item) => item.category !== product.category);
+const related = [...sameCategory, ...others].slice(0, 4);
 ---
 
 <Layout title={`${product.name} — Rackside`} description={product.description}>
@@ -51,6 +57,19 @@ const soldOut = product.stock <= 0;
       </div>
     </div>
   </section>
+
+  {
+    related.length > 0 && (
+      <section class="wrap related">
+        <h2 class="related-title">Related gear</h2>
+        <div class="related-grid">
+          {related.map((item) => (
+            <ProductCard product={item} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 </Layout>
 
 <style>
@@ -94,6 +113,20 @@ const soldOut = product.stock <= 0;
   .detail-add {
     min-width: 200px;
   }
+  .related {
+    padding: 1rem 0 2rem;
+  }
+  .related-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    border-top: 1px solid var(--line);
+    padding-top: 2.5rem;
+    margin-bottom: 1.8rem;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.4rem;
+  }
   @media (max-width: 800px) {
     .detail-grid {
       grid-template-columns: 1fr;
@@ -101,6 +134,14 @@ const soldOut = product.stock <= 0;
     }
     .detail-art {
       max-width: 420px;
+    }
+    .related-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .related-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
