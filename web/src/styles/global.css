@@ -1,25 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Fraunces", Georgia, serif;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
   --font-body: "Hanken Grotesk", system-ui, sans-serif;
 }
 
 :root {
-  --felt-950: #04100a;
-  --felt-900: #07180f;
-  --felt-800: #0a2a1d;
-  --felt-700: #0e3d29;
-  --felt-600: #115e43;
-  --felt-500: #1a8a60;
-  --ink: #050806;
-  --chalk: #f2eee1;
-  --chalk-dim: rgba(242, 238, 225, 0.66);
-  --chalk-faint: rgba(242, 238, 225, 0.4);
-  --brass: #c9a24a;
-  --brass-bright: #e6c878;
-  --line: rgba(242, 238, 225, 0.12);
-  --line-strong: rgba(242, 238, 225, 0.22);
+  /* green scale (bright, flat) */
+  --felt-950: #2aa05a;
+  --felt-900: #1f8449;
+  --felt-800: #1c7a45;
+  --felt-700: #176038;
+  --felt-600: #2aa05a;
+  --felt-500: #3bb56e;
+  /* table rail (wood / orange-brown) */
+  --rail: #b5651d;
+  --rail-dark: #7c4012;
+  /* accents */
+  --yellow: #f7c92e;
+  --orange: #f26a21;
+  --orange-dark: #d4521a;
+  --brass: #f7c92e;
+  --brass-bright: #ffd64d;
+  /* text */
+  --ink: #0f3a22;
+  --chalk: #ffffff;
+  --chalk-dim: rgba(255, 255, 255, 0.82);
+  --chalk-faint: rgba(255, 255, 255, 0.58);
+  --line: rgba(255, 255, 255, 0.16);
+  --line-strong: rgba(255, 255, 255, 0.3);
 }
 
 * {
@@ -35,35 +44,26 @@ body {
   min-height: 100vh;
   font-family: var(--font-body);
   color: var(--chalk);
-  background: var(--felt-950);
+  background: var(--felt-600);
   -webkit-font-smoothing: antialiased;
   position: relative;
   overflow-x: hidden;
 }
 
-/* Felt gradient-mesh atmosphere */
+/* flat green atmosphere with lighter blobs (like the poster) */
 body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(55% 50% at 18% 0%, rgba(26, 138, 96, 0.28), transparent 60%),
-    radial-gradient(60% 55% at 92% 8%, rgba(17, 94, 67, 0.34), transparent 62%),
-    radial-gradient(70% 60% at 50% 110%, rgba(14, 61, 41, 0.6), transparent 70%),
-    linear-gradient(180deg, var(--felt-900), var(--felt-950));
-}
-
-/* Chalk-dust grain */
-body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background:
+    radial-gradient(circle 180px at 6% 22%, var(--felt-500) 99%, transparent 100%),
+    radial-gradient(circle 90px at 16% 70%, var(--felt-500) 99%, transparent 100%),
+    radial-gradient(circle 130px at 92% 78%, var(--felt-500) 99%, transparent 100%),
+    radial-gradient(circle 60px at 80% 12%, var(--felt-500) 99%, transparent 100%),
+    linear-gradient(160deg, var(--felt-600), var(--felt-700));
+  opacity: 0.92;
 }
 
 a {
@@ -75,19 +75,19 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.02;
+  line-height: 1.03;
   margin: 0;
 }
 
 ::selection {
-  background: var(--brass);
+  background: var(--yellow);
   color: var(--ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--brass-bright);
+  outline: 2px solid var(--yellow);
   outline-offset: 3px;
 }
 
@@ -103,9 +103,9 @@ h3 {
   font-family: var(--font-body);
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--yellow);
 }
 
 .btn {
@@ -114,32 +114,33 @@ h3 {
   justify-content: center;
   gap: 0.5rem;
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
-  padding: 0.85rem 1.5rem;
+  padding: 0.85rem 1.6rem;
   border-radius: 999px;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease,
     border-color 0.2s ease;
 }
 
 .btn-brass {
-  background: linear-gradient(180deg, var(--brass-bright), var(--brass));
-  color: var(--ink);
-  box-shadow: 0 12px 30px -12px rgba(201, 162, 74, 0.6);
+  background: var(--orange);
+  color: #fff;
+  box-shadow: 0 12px 26px -12px rgba(242, 106, 33, 0.7);
 }
 .btn-brass:hover {
+  background: var(--orange-dark);
   transform: translateY(-2px);
 }
 .btn-ghost {
   background: transparent;
-  color: var(--chalk);
+  color: #fff;
   border-color: var(--line-strong);
 }
 .btn-ghost:hover {
-  border-color: var(--brass);
-  color: var(--brass-bright);
+  border-color: var(--yellow);
+  color: var(--yellow);
 }
 .btn:active {
   transform: translateY(0) scale(0.98);
@@ -150,14 +151,10 @@ h3 {
 }
 
 .panel {
-  background: linear-gradient(
-    165deg,
-    rgba(17, 94, 67, 0.22),
-    rgba(7, 24, 15, 0.55)
-  );
+  background: var(--felt-700);
   border: 1px solid var(--line);
   border-radius: 20px;
-  backdrop-filter: blur(8px);
+  box-shadow: 0 16px 34px -20px rgba(0, 0, 0, 0.55);
 }
 
 .chip {
@@ -169,7 +166,7 @@ h3 {
   letter-spacing: 0.04em;
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
-  background: rgba(242, 238, 225, 0.08);
+  background: rgba(255, 255, 255, 0.12);
   border: 1px solid var(--line);
   color: var(--chalk-dim);
 }
@@ -179,14 +176,14 @@ h3 {
   font-family: var(--font-body);
   font-size: 0.95rem;
   color: var(--chalk);
-  background: rgba(4, 16, 10, 0.6);
+  background: rgba(15, 58, 34, 0.45);
   border: 1px solid var(--line-strong);
   border-radius: 12px;
   padding: 0.7rem 0.9rem;
 }
 .field:focus {
   outline: none;
-  border-color: var(--brass);
+  border-color: var(--yellow);
 }
 
 .label {
