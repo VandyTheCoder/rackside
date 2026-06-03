@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+.pnp.*
+
+# build output
+web/dist/
+web/.astro/
+.vercel/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# env files
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+*.tsbuildinfo
+
+# local assistant notes
+CLAUDE.md
+.claude/
