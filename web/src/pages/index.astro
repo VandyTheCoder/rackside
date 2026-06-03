@@ -48,7 +48,6 @@ const products = await getProducts();
           />
         </div>
         <label class="sort">
-          <span class="sort-label">Sort</span>
           <select id="sort" aria-label="Sort products">
             <option value="featured">Featured</option>
             <option value="price-asc">Price: low to high</option>
@@ -207,12 +206,6 @@ const products = await getProducts();
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  .sort-label {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--chalk-faint);
   }
   #sort {
     font-family: var(--font-body);
