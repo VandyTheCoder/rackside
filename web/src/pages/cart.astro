@@ -22,6 +22,13 @@ import Layout from "@/layouts/Layout.astro";
 
   const root = document.getElementById("cart-root")!;
 
+  const minusIcon =
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>';
+  const plusIcon =
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+  const trashIcon =
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l1-13M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg>';
+
   function render() {
     const items = getCart();
     if (items.length === 0) {
@@ -37,14 +44,18 @@ import Layout from "@/layouts/Layout.astro";
       .map(
         (item) => `
         <li class="row">
-          <div>
+          <div class="row-info">
             <p class="row-name">${item.name}</p>
-            <p class="muted">${formatPrice(item.price_cents)}</p>
+            <p class="muted">${formatPrice(item.price_cents)} each</p>
           </div>
           <div class="row-controls">
-            <input class="field qty" type="number" min="1" max="99"
-              value="${item.quantity}" data-slug="${item.slug}" aria-label="Quantity" />
-            <button class="link-remove" data-remove="${item.slug}">Remove</button>
+            <div class="stepper">
+              <button class="step" data-dec="${item.slug}" aria-label="Decrease quantity">${minusIcon}</button>
+              <span class="qty-val">${item.quantity}</span>
+              <button class="step" data-inc="${item.slug}" aria-label="Increase quantity">${plusIcon}</button>
+            </div>
+            <span class="line-total">${formatPrice(item.price_cents * item.quantity)}</span>
+            <button class="remove" data-remove="${item.slug}" aria-label="Remove ${item.name}">${trashIcon}</button>
           </div>
         </li>`,
       )
@@ -61,9 +72,20 @@ import Layout from "@/layouts/Layout.astro";
         <button id="checkout" class="btn btn-brass"><span class="btn-label">Checkout</span></button>
       </div>`;
 
-    root.querySelectorAll<HTMLInputElement>(".qty").forEach((input) => {
-      input.addEventListener("change", () => {
-        setQuantity(input.dataset.slug!, Number(input.value));
+    const qtyOf = (slug: string) =>
+      getCart().find((entry) => entry.slug === slug)?.quantity ?? 1;
+
+    root.querySelectorAll<HTMLButtonElement>("[data-inc]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const slug = button.dataset.inc!;
+        setQuantity(slug, Math.min(99, qtyOf(slug) + 1));
+        render();
+      });
+    });
+    root.querySelectorAll<HTMLButtonElement>("[data-dec]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const slug = button.dataset.dec!;
+        setQuantity(slug, Math.max(1, qtyOf(slug) - 1));
         render();
       });
     });
@@ -127,7 +149,7 @@ import Layout from "@/layouts/Layout.astro";
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1rem 1.3rem;
+    padding: 1.1rem 1.3rem;
     border-bottom: 1px solid var(--line);
   }
   .cart-root :global(.row:last-child) {
@@ -137,25 +159,94 @@ import Layout from "@/layouts/Layout.astro";
     font-weight: 600;
     margin: 0 0 0.2rem;
   }
+  .cart-root :global(.row-info .muted) {
+    font-size: 0.82rem;
+  }
   .cart-root :global(.row-controls) {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
   }
-  .cart-root :global(.qty) {
-    width: 70px;
-    text-align: center;
+
+  /* Quantity stepper */
+  .cart-root :global(.stepper) {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: rgba(4, 16, 10, 0.5);
+    overflow: hidden;
   }
-  .cart-root :global(.link-remove) {
-    background: none;
+  .cart-root :global(.step) {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
     border: none;
+    background: transparent;
+    color: var(--chalk-dim);
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+  }
+  .cart-root :global(.step:hover) {
+    background: rgba(201, 162, 74, 0.16);
+    color: var(--brass-bright);
+  }
+  .cart-root :global(.step:active) {
+    transform: scale(0.92);
+  }
+  .cart-root :global(.step svg) {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .cart-root :global(.qty-val) {
+    min-width: 2ch;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .cart-root :global(.line-total) {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    min-width: 5ch;
+    text-align: right;
+  }
+
+  /* Remove (trash) */
+  .cart-root :global(.remove) {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
     color: var(--chalk-faint);
     cursor: pointer;
-    font-size: 0.85rem;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
   }
-  .cart-root :global(.link-remove:hover) {
+  .cart-root :global(.remove:hover) {
     color: #e0625a;
+    border-color: rgba(224, 98, 90, 0.4);
+    background: rgba(224, 98, 90, 0.1);
   }
+  .cart-root :global(.remove svg) {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   .cart-root :global(.summary) {
     display: flex;
     align-items: baseline;
@@ -181,5 +272,17 @@ import Layout from "@/layouts/Layout.astro";
   .cart-root :global(.error) {
     color: #e0625a;
     margin-bottom: 1rem;
+  }
+
+  @media (max-width: 560px) {
+    .cart-root :global(.row) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+    .cart-root :global(.row-controls) {
+      width: 100%;
+      justify-content: space-between;
+    }
   }
 </style>
